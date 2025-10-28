@@ -56,13 +56,17 @@ localStorage.setItem("movies", JSON.stringify(checkedData)); //masyva checkedDat
 const getMovieById = (id) => movies.find((movie) => movie.id === id) || null; // id-tai argumentas. ieskom filmo is masyvo movies pagal jo id, jei neranda grazina null
 console.log(getMovieById(829280));
 
+
+////// 5.
 const addToFavorites = (id) => {
   const favorites = chekingLS();
   const movie = getMovieById(id);
-  movie &&
+  movie &&    //// && vykdoma jei tik filmas rastas
     localStorage.setItem(
       "favorites",
-      JSON.stringify([...favorites, { id: movie.id, title: movie.title }])
+      JSON.stringify(favorites.some(fav => fav.id === movie.id) /// tikrinam ar favorites yra filmas kurio id kaip sio filmo
+        ? favorites /// ? jei taip, tai... , o jei ne :
+        : [...favorites, { id: movie.id, title: movie.title }])  ///jei toks ID yra paliekam sena masyva, jei ner, pridedam nauja filma
     );
 };
 
@@ -74,4 +78,21 @@ addToFavorites(985939);
 // addToFavorites(507086);
 // addToFavorites(642885);
 
-console.log(JSON.parse(localStorage.getItem("favorites")));
+console.log(JSON.parse(localStorage.getItem("favorites")));  //
+
+/////////// 6.
+const showFavorites = () => {
+  const favorites = JSON.parse(localStorage.getItem("favorites")) || [] ; ///paverciam teksta i masyva, jeigu nera nieko, naudojam tuscia masyva
+  favorites.forEach(fav => console.log(`id: ${fav.id}, title: ${fav.title}`));  ///einam per kiekviena filma ir spauzdinam jo id ir titlus
+};
+showFavorites();
+
+///// 7.
+const removeFromFavorites = (id) => {
+  const favorites = JSON.parse(localStorage.getItem("favorites") || []);
+  const updated = favorites.filter(fav => String(fav.id) !== String(id));
+  localStorage.setItem("favorites", JSON.stringify(updated));
+  console.log(updated);
+};
+
+removeFromFavorites(829280);
